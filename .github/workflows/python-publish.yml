@@ -38,10 +38,9 @@ jobs:
 
     environment:
       name: pypi-release
-      url: https://pypi.org/p/django-email-validation
 
     permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
 
     steps:
     - uses: actions/download-artifact@v4
@@ -61,7 +60,7 @@ jobs:
       name: pypi-test
 
     permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
 
     steps:
     - uses: actions/download-artifact@v4
