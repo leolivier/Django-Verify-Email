@@ -10,29 +10,55 @@ on:
     types: [prereleased, published]
 
 jobs:
-  deploy:
-
+  build:
     runs-on: ubuntu-latest
+    name: build python package
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python3 -m pip install --upgrade build
+      - name: Build package
+        run: python -m build
+
+  deploy:
+    if: github.event_name  == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    name: Upload Python Package to PyPi on release
+
+    environment:
+      name: pypi-release
+      url: https://pypi.org/p/django-email-validation
+
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.8'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python3 -m pip install --upgrade build
-    - name: Build package
-      run: python -m build
-    - name: Publish package
+    - name: Publish package to pypi if release 
       uses: pypa/gh-action-pypi-publish@release/v1
-      env:
-        name: ${{ github.event_name  == 'push' && 'testpypi' || 'pypi' }}
-        url: ${{ github.event_name  == 'push' && 'https://test.pypi.org/p/' || 'https://pypi.org/project/' }}Django-Verify-Email
-      with:
-        user: __token__
-        password: ${{ github.event_name  == 'push' && secrets.TEST_PYPI_SECRET_TOKEN || secrets.PYPI_SECRET_TOKEN }}
-        repository-url: ${{ github.event_name  == 'push' && 'https://test.pypi.org/legacy/' || 'https://pypi.org/legacy/' }}
 
+  deploy-test:
+    if: github.event_name  == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    name: Upload Python Package to Test PyPi on push
+
+    environment:
+      name: pypi-test
+      url: https://test.pypi.org/p/django-email-validation
+
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+
+    steps:
+    - name: Publish package to test.pypi if push
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
+  
