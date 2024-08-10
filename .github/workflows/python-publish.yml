@@ -28,7 +28,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: dist/*
+          path: dist/
 
   deploy:
     if: github.event_name  == 'release'
@@ -47,6 +47,8 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: dist
+    - name: Unzip artifact
+      run: unzip dist.zip -d dist
     - name: Publish package to pypi if release 
       uses: pypa/gh-action-pypi-publish@release/v1
 
@@ -67,6 +69,8 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: dist
+    - name: Unzip artifact
+      run: unzip dist.zip -d dist
     - name: Publish package to test.pypi if push
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
