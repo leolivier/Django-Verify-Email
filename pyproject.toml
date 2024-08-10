@@ -13,7 +13,7 @@ authors = [
 description = " A Django app for email verification."
 readme = "README.md"
 requires-python = ">=3.6"
-dependencies=["binascii", "django"]
+dependencies=["django"]
 classifiers = [
 	"Environment :: Web Environment",
 	"Framework :: Django CMS :: 3.8",
