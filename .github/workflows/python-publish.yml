@@ -47,8 +47,7 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: dist
-    - name: Unzip artifact
-      run: unzip dist.zip -d dist
+        path: dist/
     - name: Publish package to pypi if release 
       uses: pypa/gh-action-pypi-publish@release/v1
 
@@ -69,8 +68,7 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: dist
-    - name: Unzip artifact
-      run: unzip dist.zip -d dist
+        path: dist/
     - name: Publish package to test.pypi if push
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
